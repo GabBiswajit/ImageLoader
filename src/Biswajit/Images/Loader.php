@@ -8,8 +8,7 @@ use pocketmine\entity\Attribute;
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
-use pocketmine\network\mcpe\protocol\NetworkStackLatencyPacket;
-use pocketmine\network\mcpe\protocol\types\entity\Attribute as NetworkAttribute;
+use pocketmine\network\mcpe\protocol\types\entity\UpdateAttribute;
 use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\CancelTaskException;
@@ -32,7 +31,17 @@ final class Loader extends PluginBase implements Listener{
                             throw new CancelTaskException();
                         }
                         $attr = $player->getAttributeMap()->get(Attribute::EXPERIENCE_LEVEL);
-                        $entries = [new NetworkAttribute($attr->getId(), $attr->getMinValue(), $attr->getMaxValue(), $attr->getValue(), $attr->getDefaultValue(), [])];
+
+                        $entries = [new UpdateAttribute(
+                            $attr->getId(),
+                            $attr->getMinValue(),
+                            $attr->getMaxValue(),
+                            $attr->getValue(),
+                            $attr->getMinValue(),
+                            $attr->getMaxValue(),
+                            $attr->getValue(),
+                            []
+                        )];
                         $player->getNetworkSession()->sendDataPacket(UpdateAttributesPacket::create($player->getId(), $entries, 0));
                     }), 10);
                 }
